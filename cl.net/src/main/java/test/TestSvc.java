@@ -17,6 +17,7 @@ import cl.net.services.SystemSvc;
 import cl.net.services.impl.FtpSvcImpl;
 import cl.net.services.impl.RestSvcImpl;
 import cl.net.services.impl.SystemSvcImpl;
+import cl.net.twonky.TwonkyClient;
 import cl.net.utils.GsonUtils;
 import cl.net.utils.StringUtils;
 import cl.net.vo.ConnectionVO;
@@ -47,20 +48,32 @@ public class TestSvc {
 		
 		System.out.println(text.substring(0,inicio));
 	}
-	
+
 	@Test
-	public void twonk(){
+	public void twonkyClient(){
+		TwonkyClient twonyClient = new TwonkyClient();
+		twonyClient.connect("ranmadxs.dyndns.org", 9000);
+		if(twonyClient.isConnected()){
+			System.out.println("XD");
+		}else{
+			System.out.println(":S");
+		}
+	}
+	
+	
+	//@Test
+	public void twonky(){
 		RestSvc restSvc = new RestSvcImpl();
 		RestVO restVO = new RestVO();
-		restVO.setUrl("http://ranmadxs.dyndns.org:9000/rpc/getdir?path=");
+		restVO.setUrl("http://ranmadxs.dyndns.org:9000/rpc/getdir?path=001");
 		String result = restSvc.get(restVO, null);
 		String[] res = result.split("\\n");
 		System.out.println(result);
-		for (String var : res) {
-			if(var.contains("D/")){
-				System.out.println("Es un directorio");
-			}
-		}
+//		for (String var : res) {
+//			if(var.contains("D/")){
+//				System.out.println("Es un directorio");
+//			}
+//		}
 		System.out.println(res);
 	}
 	
