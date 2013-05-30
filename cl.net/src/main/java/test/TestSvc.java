@@ -12,12 +12,16 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import cl.net.services.ConnectionSvc;
+import cl.net.services.RestSvc;
 import cl.net.services.SystemSvc;
 import cl.net.services.impl.FtpSvcImpl;
+import cl.net.services.impl.RestSvcImpl;
 import cl.net.services.impl.SystemSvcImpl;
 import cl.net.utils.GsonUtils;
+import cl.net.utils.StringUtils;
 import cl.net.vo.ConnectionVO;
 import cl.net.vo.DirVO;
+import cl.net.vo.RestVO;
 import cl.net.vo.SystemVO;
 
 
@@ -45,6 +49,19 @@ public class TestSvc {
 	}
 	
 	@Test
+	public void twonk(){
+		RestSvc restSvc = new RestSvcImpl();
+		RestVO restVO = new RestVO();
+		restVO.setUrl("http://ranmadxs.dyndns.org:9000/rpc/getdir?path=");
+		String result = restSvc.get(restVO, null);
+		String[] res = result.split("\\n");
+		System.out.println(result);
+		
+		System.out.println(res);
+	}
+	
+	
+	//@Test
 	public void prueba(){		
 		SystemVO systemVO = new SystemVO();
 		systemVO.setId(1);
