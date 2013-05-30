@@ -56,7 +56,11 @@ public class TestSvc {
 		String result = restSvc.get(restVO, null);
 		String[] res = result.split("\\n");
 		System.out.println(result);
-		
+		for (String var : res) {
+			if(var.contains("D/")){
+				System.out.println("Es un directorio");
+			}
+		}
 		System.out.println(res);
 	}
 	
