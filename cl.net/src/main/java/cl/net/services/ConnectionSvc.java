@@ -9,6 +9,6 @@ import cl.net.vo.SystemVO;
 
 public interface ConnectionSvc {
 
-	void scann(SystemVO systemVO,DirVO dirVO)throws IOException;
+	void scann(SystemVO systemVO,DirVO dirVO)throws Exception;
 	
 }

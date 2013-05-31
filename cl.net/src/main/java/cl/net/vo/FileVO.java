@@ -13,8 +13,16 @@ public class FileVO extends AbstractUtilDTO{
 	private String size;
 	private String mime;
 	private String attr;
+	private String codigo;
 	
 	
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 	public Integer getId() {
 		return id;
 	}
