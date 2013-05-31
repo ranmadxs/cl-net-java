@@ -37,20 +37,20 @@ public class FtpSvcImpl implements ConnectionSvc {
 		
 		this.ftp = new FTPClient();
 		try {
-			this.ftp.connect(connectionVO.getIp(), connectionVO.getPort());
-			this.ftp.login(connectionVO.getUsername(), connectionVO.getPassword());
+			this.ftp.connect(this.connectionVO.getIp(), this.connectionVO.getPort());
+			this.ftp.login(this.connectionVO.getUsername(), this.connectionVO.getPassword());
 			this.ftp.setFileType(FTP.BINARY_FILE_TYPE);
 			this.ftp.enterLocalPassiveMode();
 			this.ftp.setUseEPSVwithIPv4(true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.rb = ResourceBundle.getBundle("constantes");
+		rb = ResourceBundle.getBundle("constantes");
 		this.restUrl = rb.getString("restUrl");
 		this.restSvc = new RestSvcImpl();
 	}
 
-	public void scann(SystemVO systemVO, DirVO dirVO) throws IOException {
+	public void scann(SystemVO systemVO, DirVO dirVO) throws Exception {
 		FTPFile[] files;
 		FileVO fileVO;
 		DirVO newDirVO, parentDirVO;

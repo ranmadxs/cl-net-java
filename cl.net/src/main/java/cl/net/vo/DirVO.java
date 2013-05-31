@@ -13,8 +13,17 @@ public class DirVO extends AbstractUtilDTO{
 	private String fecha;
 	private String FK_dir;
 	private String size;
+	private String codigo;
+	
+	
 			
 	
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 	public String getSize() {
 		return size;
 	}
