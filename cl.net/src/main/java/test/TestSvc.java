@@ -18,6 +18,7 @@ import cl.net.services.impl.FtpSvcImpl;
 import cl.net.services.impl.RestSvcImpl;
 import cl.net.services.impl.SystemSvcImpl;
 import cl.net.twonky.TwonkyClient;
+import cl.net.twonky.TwonkyType;
 import cl.net.utils.GsonUtils;
 import cl.net.utils.StringUtils;
 import cl.net.vo.ConnectionVO;
@@ -51,12 +52,13 @@ public class TestSvc {
 
 	@Test
 	public void twonkyClient(){
+		//http://192.168.1.101:9000/rpc/getdir?path=001/001/001
 		TwonkyClient twonyClient = new TwonkyClient();
-		twonyClient.connect("ranmadxs.dyndns.org", 9000);
+		twonyClient.connect("192.168.1.101", 9000);
 		if(twonyClient.isConnected()){
-			System.out.println("XD");
+			twonyClient.listFiles("001/001/001", TwonkyType.FILTER_ALL);
 		}else{
-			System.out.println(":S");
+			System.out.println("OFFLINE");
 		}
 	}
 	
@@ -65,7 +67,7 @@ public class TestSvc {
 	public void twonky(){
 		RestSvc restSvc = new RestSvcImpl();
 		RestVO restVO = new RestVO();
-		restVO.setUrl("http://ranmadxs.dyndns.org:9000/rpc/getdir?path=001");
+		restVO.setUrl("http://192.168.1.101:9000/rpc/getdir?path=001");
 		String result = restSvc.get(restVO, null);
 		String[] res = result.split("\\n");
 		System.out.println(result);
