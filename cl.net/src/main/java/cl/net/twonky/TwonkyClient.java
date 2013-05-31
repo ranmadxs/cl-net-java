@@ -20,6 +20,7 @@ public class TwonkyClient {
 	private Integer portNumber;
 	private Boolean isOnline;
 	private Boolean isConnected;
+	private TWStatus twStatus;
 	
 	public TwonkyClient connect(String serverAddr, Integer portNumber){
 		Socket socket = new Socket();
@@ -27,15 +28,13 @@ public class TwonkyClient {
 		this.portNumber = portNumber;
 		this.isOnline = Boolean.FALSE;
 		try{
-			
-			
-		// Configure socket here
-		socket.connect(new InetSocketAddress(serverAddr, portNumber), 3000);
-		if (socket.isConnected()) {
-			this.isOnline = Boolean.TRUE;
-		} else {
-			this.isOnline = Boolean.FALSE;
-		}
+						
+			socket.connect(new InetSocketAddress(serverAddr, portNumber), 3000);
+			if (socket.isConnected()) {
+				this.isOnline = Boolean.TRUE;
+			} else {
+				this.isOnline = Boolean.FALSE;
+			}
 		
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -50,8 +49,15 @@ public class TwonkyClient {
 		return this;
 	}
 	
-	protected void getInfoStatus(){
-		//TODO: Debo crear el VO del info status, revisar el systemout
+	protected void setInfoTW(String data){
+		//TODO: esto con reflection
+		String[] datas = data.split("\\n");
+		for (String info : datas) {
+			
+		}
+	}
+	
+	protected void getInfoStatus(){	
 		this.isConnected = Boolean.FALSE;
 		try{		
 			if(!this.isOnline){
@@ -62,6 +68,7 @@ public class TwonkyClient {
 						.concat(":").concat(String.valueOf(this.portNumber)).concat("/")
 						.concat(TwonkyType.CONNECTION_RPC).concat("/info_status"));
 				System.out.println(result);
+				this.setInfoTW(result);
 				if(result == null){
 					this.isConnected = Boolean.FALSE;
 				}else if(result.contains("twonkymedia-server.ini")){
@@ -84,6 +91,29 @@ public class TwonkyClient {
 			filter = TwonkyType.FILTER_ALL;
 		}
 		List<TwonkyFile> list = new ArrayList<TwonkyFile>();
+		TwonkyFile file;
+		//http://192.168.1.101:9000/rpc/getdir?path=001
+		String result = this.get(TwonkyType.CONNECTION_PROTOCOL.concat("://").concat(this.serverAddr)
+				.concat(":").concat(String.valueOf(this.portNumber)).concat("/")
+				.concat(TwonkyType.CONNECTION_RPC).concat("/getdir?path=").concat(queryParam));
+		System.out.println(result);
+		String[] res = result.split("\\n");
+		
+		for (String var : res) {
+			if(var.length() > 4){
+				file = new TwonkyFile();
+				file.setId(var.substring(0, 3));
+				file.setName(var.substring(4, var.length()));
+				file.setType(var.substring(3, 4));
+				if(filter.equals(TwonkyType.FILTER_ALL)){
+					list.add(file);
+				}else{
+					if(filter.equals(file.getType())){
+						list.add(file);	
+					}
+				}
+			}
+		}
 		return list;
 	}
 	
