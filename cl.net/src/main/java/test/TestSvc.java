@@ -50,7 +50,7 @@ public class TestSvc {
 		System.out.println(text.substring(0,inicio));
 	}
 
-	@Test
+	//@Test
 	public void twonkyClient(){
 		//http://192.168.1.101:9000/rpc/getdir?path=001/001/001
 		TwonkyClient twonyClient = new TwonkyClient();
@@ -80,7 +80,7 @@ public class TestSvc {
 	}
 	
 	
-	//@Test
+	@Test
 	public void prueba(){		
 		SystemVO systemVO = new SystemVO();
 		systemVO.setId(1);
@@ -88,8 +88,8 @@ public class TestSvc {
 		conn.setPort(21);
 		conn.setUsername("usuario1");
 		conn.setPassword("nueva123");
-		conn.setIp("ranmadxs.dyndns.org");
-		
+		//conn.setIp("ranmadxs.dyndns.org");
+		conn.setIp("192.168.1.254");
 		ConnectionSvc connSvc = new FtpSvcImpl(conn);
 		SystemSvc systemSvc = new SystemSvcImpl();
 		try {
