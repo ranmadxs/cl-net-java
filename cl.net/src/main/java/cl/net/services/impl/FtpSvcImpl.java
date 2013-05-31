@@ -52,6 +52,7 @@ public class FtpSvcImpl implements ConnectionSvc {
 
 	public void scann(SystemVO systemVO, DirVO dirVO) throws Exception {
 		FTPFile[] files;
+		String breadcrumb;
 		FileVO fileVO;
 		DirVO newDirVO, parentDirVO;
 		RestVO restVO;
@@ -69,20 +70,28 @@ public class FtpSvcImpl implements ConnectionSvc {
 				
 				files = ftp.listFiles(".", FTPFileFilters.ALL);
 				
-				for (FTPFile ftpFile : files) {
+				for (FTPFile ftpFile : files) {					
 	                System.out.println(ftpFile.toFormattedString());
 	                params = new HashMap<String, Object>();
+	                breadcrumb = "";
+	                if(dirVO != null){
+	                	breadcrumb = breadcrumb.concat(dirVO.getBreadcrumb().concat("/"));
+	                }
 	                if(ftpFile.isDirectory()){	                	
 	                	newDirVO = new DirVO();
 	                	restVO = new RestVO();
 	                	newDirVO.setFecha(fecha);
 	                	newDirVO.setSize(String.valueOf(ftpFile.getSize()));
 	                	if(dirVO != null){
-	                		newDirVO.setFK_dir(String.valueOf(dirVO.getId()));	
+	                		newDirVO.setFK_dir(String.valueOf(dirVO.getId()));
+	                		
 	                	}
+	                	
+	                	
 	                	newDirVO.setFK_system(systemVO.getId());
 	                	newDirVO.setName(ftpFile.getName());
 	                	newDirVO.setTipo(String.valueOf(ftpFile.getType()));
+	                	newDirVO.setBreadcrumb(breadcrumb);
 	                	restVO.setUrl(this.restUrl.concat("rs/svc.php/dir/create"));
 	                	
 	                	params = ObjectUtils.introspect(newDirVO);
@@ -101,6 +110,7 @@ public class FtpSvcImpl implements ConnectionSvc {
 	                	fileVO.setName(ftpFile.getName());
 	                	fileVO.setSize(String.valueOf(ftpFile.getSize()));
 	                	fileVO.setTipo(String.valueOf(ftpFile.getType()));
+	                	fileVO.setBreadcrumb(breadcrumb);
 	                	params = ObjectUtils.introspect(fileVO);
 	                	json = restSvc.post(restVO, params);
 	                	

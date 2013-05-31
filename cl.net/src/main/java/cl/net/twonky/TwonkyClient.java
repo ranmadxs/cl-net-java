@@ -93,9 +93,10 @@ public class TwonkyClient {
 		List<TwonkyFile> list = new ArrayList<TwonkyFile>();
 		TwonkyFile file;
 		//http://192.168.1.101:9000/rpc/getdir?path=001
-		String result = this.get(TwonkyType.CONNECTION_PROTOCOL.concat("://").concat(this.serverAddr)
+		String url = TwonkyType.CONNECTION_PROTOCOL.concat("://").concat(this.serverAddr)
 				.concat(":").concat(String.valueOf(this.portNumber)).concat("/")
-				.concat(TwonkyType.CONNECTION_RPC).concat("/getdir?path=").concat(queryParam));
+				.concat(TwonkyType.CONNECTION_RPC).concat("/getdir?path=").concat(queryParam);
+		String result = this.get(url);
 		System.out.println(result);
 		String[] res = result.split("\\n");
 		
