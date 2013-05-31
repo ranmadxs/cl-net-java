@@ -17,6 +17,7 @@ import cl.net.services.SystemSvc;
 import cl.net.services.impl.FtpSvcImpl;
 import cl.net.services.impl.RestSvcImpl;
 import cl.net.services.impl.SystemSvcImpl;
+import cl.net.services.impl.TwonkySvcImpl;
 import cl.net.twonky.TwonkyClient;
 import cl.net.twonky.TwonkyType;
 import cl.net.utils.GsonUtils;
@@ -83,14 +84,16 @@ public class TestSvc {
 	@Test
 	public void prueba(){		
 		SystemVO systemVO = new SystemVO();
-		systemVO.setId(1);
+		systemVO.setId(2);
 		ConnectionVO conn = new ConnectionVO();
-		conn.setPort(21);
+		//conn.setPort(21);
+		conn.setPort(9000);
 		conn.setUsername("usuario1");
 		conn.setPassword("nueva123");
-		//conn.setIp("ranmadxs.dyndns.org");
-		conn.setIp("192.168.1.254");
-		ConnectionSvc connSvc = new FtpSvcImpl(conn);
+		conn.setIp("ranmadxs.dyndns.org");
+		//conn.setIp("192.168.1.254");
+		//ConnectionSvc connSvc = new FtpSvcImpl(conn);
+		ConnectionSvc connSvc = new TwonkySvcImpl(conn);
 		SystemSvc systemSvc = new SystemSvcImpl();
 		try {
 			systemSvc.resetFileSystem(systemVO);

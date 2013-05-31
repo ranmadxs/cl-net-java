@@ -14,9 +14,15 @@ public class DirVO extends AbstractUtilDTO{
 	private String FK_dir;
 	private String size;
 	private String codigo;
+	private String breadcrumb;		
 	
 	
-			
+	public String getBreadcrumb() {
+		return breadcrumb;
+	}
+	public void setBreadcrumb(String breadcrumb) {
+		this.breadcrumb = breadcrumb;
+	}		
 	
 	public String getCodigo() {
 		return codigo;

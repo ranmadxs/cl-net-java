@@ -14,9 +14,14 @@ public class FileVO extends AbstractUtilDTO{
 	private String mime;
 	private String attr;
 	private String codigo;
+	private String breadcrumb;		
 	
-	
-	
+	public String getBreadcrumb() {
+		return breadcrumb;
+	}
+	public void setBreadcrumb(String breadcrumb) {
+		this.breadcrumb = breadcrumb;
+	}
 	public String getCodigo() {
 		return codigo;
 	}

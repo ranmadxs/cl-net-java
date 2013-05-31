@@ -47,6 +47,7 @@ public class TwonkySvcImpl implements ConnectionSvc{
 		String queryParam = "001";
 		List<TwonkyFile> list;
 		FileVO fileVO;
+		String breadcrumb;
 		DirVO newDirVO, parentDirVO;
 		RestVO restVO;
 		Map<String, Object> params;
@@ -55,7 +56,7 @@ public class TwonkySvcImpl implements ConnectionSvc{
 		String fecha = sdf.format(date);
 		String json;
 		if(dirVO != null){
-			queryParam = queryParam.concat("/").concat(dirVO.getCodigo());
+			queryParam = queryParam.concat("/").concat(dirVO.getBreadcrumb()).concat(dirVO.getCodigo());
 		}
 		if(twonyClient.isConnected()){
 			
@@ -63,32 +64,43 @@ public class TwonkySvcImpl implements ConnectionSvc{
 			
 			for (TwonkyFile twonkyFile : list) {
 				params = new HashMap<String, Object>();
+				breadcrumb = "";
+                if(dirVO != null){
+                	breadcrumb = breadcrumb.concat(dirVO.getBreadcrumb().concat("/"));
+                }
 				if(twonkyFile.getType().equals(TwonkyType.FILTER_DIR)){
                 	newDirVO = new DirVO();
                 	restVO = new RestVO();
                 	newDirVO.setFecha(fecha);
+                	
                 	if(dirVO != null){
                 		newDirVO.setFK_dir(String.valueOf(dirVO.getId()));	
                 	}
                 	newDirVO.setFK_system(systemVO.getId());
                 	newDirVO.setName(twonkyFile.getName());
                 	newDirVO.setTipo(String.valueOf(twonkyFile.getType()));
+                	newDirVO.setBreadcrumb(breadcrumb);
+                	newDirVO.setCodigo(twonkyFile.getId());
                 	restVO.setUrl(this.restUrl.concat("rs/svc.php/dir/create"));
                 	
                 	params = ObjectUtils.introspect(newDirVO);
                 	json = restSvc.post(restVO, params);
                 	parentDirVO = (DirVO) GsonUtils.json2obj(json, DirVO.class);
+                	
+                	parentDirVO.setBreadcrumb(breadcrumb);
                 	parentDirVO.setCodigo(twonkyFile.getId());
                 	this.scann(systemVO, parentDirVO);
 				}else{
                 	restVO = new RestVO();
                 	restVO.setUrl(this.restUrl.concat("rs/svc.php/file/create"));
                 	fileVO = new FileVO();
-                	fileVO.setCodigo(twonkyFile.getId());
+                	
                 	fileVO.setFecha(fecha);
                 	if(dirVO != null){
                 		fileVO.setFK_dir(dirVO.getId());
-                	}	                	
+                	}
+                	fileVO.setBreadcrumb(breadcrumb);
+                	fileVO.setCodigo(twonkyFile.getId());
                 	fileVO.setName(twonkyFile.getName());
                 	//fileVO.setSize(String.valueOf(ftpFile.getSize()));
                 	fileVO.setTipo(String.valueOf(twonkyFile.getType()));
@@ -97,6 +109,8 @@ public class TwonkySvcImpl implements ConnectionSvc{
 				}
 			}
 			
+		}else{
+			throw new Exception("Not conected");
 		}
 		
 		
