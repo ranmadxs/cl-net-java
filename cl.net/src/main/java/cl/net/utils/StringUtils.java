@@ -1,6 +1,19 @@
 package cl.net.utils;
 
 public class StringUtils {
+
+	public static String getFileExtension(String fileName){
+		String extension = "";
+
+		int i = fileName.lastIndexOf('.');
+		int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+		if (i > p) {
+		    extension = fileName.substring(i+1);
+		}
+		return extension;
+	}
+	
 	
 	public static String implode(String separator, String... data) {
 	    StringBuilder sb = new StringBuilder();

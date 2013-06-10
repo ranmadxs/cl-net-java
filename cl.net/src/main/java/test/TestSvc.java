@@ -1,5 +1,7 @@
 package test;
 
+import java.io.File;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import cl.net.services.ConnectionSvc;
 import cl.net.services.RestSvc;
 import cl.net.services.SystemSvc;
+import cl.net.services.impl.FileSystemSvcImpl;
 import cl.net.services.impl.FtpSvcImpl;
 import cl.net.services.impl.RestSvcImpl;
 import cl.net.services.impl.SystemSvcImpl;
@@ -34,8 +37,13 @@ public class TestSvc {
 	public void ejemploJson(){
 		DirVO dirVO = new DirVO();
 		
-		String json = "{\"id\":5,\"name\":\"C\",\"FK_system\":\"1\",\"tipo\":\"1\",\"fecha\":\"2013-05-26 19:52\",\"FK_dir\":\"\",\"class\":\"class cl.net.vo.DirVO\"}";
-		dirVO = (DirVO) GsonUtils.json2obj(json, DirVO.class);
+		String json = "{\"id\":3,\"name\":\"torrent\",\"FK_system\":\"1\",\"tipo\":\"1\",\"fecha\":\"2013-06-02 01:19\",\"FK_dir\":\"\",\"size\":\"4096\",\"codigo\":\"\",\"breadcrumb\":\"\",\"class\":\"class cl.net.vo.DirVO\"}";
+		try {
+			dirVO = (DirVO) GsonUtils.json2obj(json, DirVO.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println(dirVO);
 	}
 	
@@ -51,6 +59,16 @@ public class TestSvc {
 		System.out.println(text.substring(0,inicio));
 	}
 
+	@Test
+	public void ejemplo(){
+		String lol = ".miocrawler_cache";
+		if(lol.startsWith(".")){
+			System.out.println("parte con punto");
+		}else{
+			System.out.println("No parte con punto");
+		}
+	}
+	
 	//@Test
 	public void twonkyClient(){
 		//http://192.168.1.101:9000/rpc/getdir?path=001/001/001
@@ -80,24 +98,60 @@ public class TestSvc {
 		System.out.println(res);
 	}
 	
-	
-	@Test
-	public void prueba(){		
-		SystemVO systemVO = new SystemVO();
-		systemVO.setId(2);
+	//@Test
+	public void fileScann(){
 		ConnectionVO conn = new ConnectionVO();
-		//conn.setPort(21);
-		conn.setPort(9000);
-		conn.setUsername("usuario1");
-		conn.setPassword("nueva123");
-		conn.setIp("ranmadxs.dyndns.org");
-		//conn.setIp("192.168.1.254");
-		//ConnectionSvc connSvc = new FtpSvcImpl(conn);
-		ConnectionSvc connSvc = new TwonkySvcImpl(conn);
+		conn.setDns("C:\\media\\");
+		conn.setUri("Series");
+		
+		SystemVO systemVO = new SystemVO();
+		systemVO.setId(1);
+		
+		DirVO dirVO= new DirVO();
+		dirVO.setFK_system(systemVO.getId());
+		
 		SystemSvc systemSvc = new SystemSvcImpl();
+		ConnectionSvc connSvc = new FileSystemSvcImpl(conn);
 		try {
 			systemSvc.resetFileSystem(systemVO);
-			connSvc.scann(systemVO, null);
+			connSvc.scann(dirVO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		  String path = "/"; 
+//		  
+//		  String files;
+//		  File folder = new File(path);
+//		  File[] listOfFiles = folder.listFiles(); 
+//		  
+//		  for (File file : listOfFiles) {
+//			   files = file.getName();
+//			   System.out.println(files);
+//		}
+		  
+		
+	}
+	
+	
+	//@Test
+	public void prueba(){		
+		SystemVO systemVO = new SystemVO();
+		systemVO.setId(1);
+		ConnectionVO conn = new ConnectionVO();
+		conn.setPort(201);
+		//conn.setPort(9000);
+		conn.setUsername("pi");
+		conn.setPassword("epsilon1");
+		//conn.setIp("ranmadxs.dyndns.org");
+		conn.setIp("192.168.1.103");
+		ConnectionSvc connSvc = new FtpSvcImpl(conn);
+		//ConnectionSvc connSvc = new TwonkySvcImpl(conn);
+		SystemSvc systemSvc = new SystemSvcImpl();
+		DirVO dirVO = new DirVO();
+		dirVO.setFK_system(systemVO.getId());
+		try {
+			systemSvc.resetFileSystem(systemVO);
+			connSvc.scann(dirVO);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -114,8 +168,14 @@ public class TestSvc {
         // getting XML data
         System.out.println(json);
                 
-        DirVO dirVO = (DirVO) GsonUtils.json2obj(json, DirVO.class);
-        System.out.println(dirVO);
+        DirVO dirVO;
+		try {
+			dirVO = (DirVO) GsonUtils.json2obj(json, DirVO.class);
+	        System.out.println(dirVO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         // getting JSON data
         //System.out.println(service. path("restPath").path("resourcePath").accept(MediaType.APPLICATION_XML).get(String.class));
 

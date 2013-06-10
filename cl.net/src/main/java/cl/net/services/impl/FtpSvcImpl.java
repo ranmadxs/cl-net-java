@@ -13,19 +13,23 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilters;
+import org.apache.log4j.Logger;
 
 import cl.net.services.ConnectionSvc;
 import cl.net.services.RestSvc;
 import cl.net.utils.GsonUtils;
 import cl.net.utils.ObjectUtils;
+import cl.net.utils.StringUtils;
 import cl.net.vo.ConnectionVO;
 import cl.net.vo.DirVO;
 import cl.net.vo.FileVO;
 import cl.net.vo.RestVO;
-import cl.net.vo.SystemVO;
+
 
 public class FtpSvcImpl implements ConnectionSvc {
 
+	private static Logger log = Logger.getLogger(FtpSvcImpl.class);
+	
 	private FTPClient ftp;
 	private RestSvc restSvc;
 	private ConnectionVO connectionVO;
@@ -50,7 +54,7 @@ public class FtpSvcImpl implements ConnectionSvc {
 		this.restSvc = new RestSvcImpl();
 	}
 
-	public void scann(SystemVO systemVO, DirVO dirVO) throws Exception {
+	public void scann(DirVO dirVO) throws Exception {
 		FTPFile[] files;
 		String breadcrumb;
 		FileVO fileVO;
@@ -63,19 +67,18 @@ public class FtpSvcImpl implements ConnectionSvc {
 		String json;
 		try{
 			if(this.ftp.isConnected()){
-				if(dirVO != null){
-					//System.out.println("ftp> cwd "+ ftpDir.getName());
+				if(dirVO != null && dirVO.getId() != null){
 					ftp.cwd(dirVO.getName());
 				}
 				
 				files = ftp.listFiles(".", FTPFileFilters.ALL);
 				
 				for (FTPFile ftpFile : files) {					
-	                System.out.println(ftpFile.toFormattedString());
+	                log.info(ftpFile.toFormattedString());
 	                params = new HashMap<String, Object>();
 	                breadcrumb = "";
-	                if(dirVO != null){
-	                	breadcrumb = breadcrumb.concat(dirVO.getBreadcrumb().concat("/"));
+	                if(dirVO != null && dirVO.getId() != null){
+	                	breadcrumb = breadcrumb.concat(dirVO.getBreadcrumb().concat("/").concat(dirVO.getName()));
 	                }
 	                if(ftpFile.isDirectory()){	                	
 	                	newDirVO = new DirVO();
@@ -88,19 +91,19 @@ public class FtpSvcImpl implements ConnectionSvc {
 	                	}
 	                	
 	                	
-	                	newDirVO.setFK_system(systemVO.getId());
+	                	newDirVO.setFK_system(dirVO.getFK_system());
 	                	newDirVO.setName(ftpFile.getName());
 	                	newDirVO.setTipo(String.valueOf(ftpFile.getType()));
 	                	newDirVO.setBreadcrumb(breadcrumb);
-	                	restVO.setUrl(this.restUrl.concat("rs/svc.php/dir/create"));
+	                	restVO.setUrl(this.restUrl.concat("rpc/svc.php/dir/create"));
 	                	
 	                	params = ObjectUtils.introspect(newDirVO);
 	                	json = restSvc.post(restVO, params);
 	                	parentDirVO = (DirVO) GsonUtils.json2obj(json, DirVO.class);
-	                	this.scann(systemVO, parentDirVO);
+	                	this.scann(parentDirVO);
 	                }else{
 	                	restVO = new RestVO();
-	                	restVO.setUrl(this.restUrl.concat("rs/svc.php/file/create"));
+	                	restVO.setUrl(this.restUrl.concat("rpc/svc.php/file/create"));
 	                	fileVO = new FileVO();
 	                	fileVO.setAttr(ftpFile.getRawListing());
 	                	fileVO.setFecha(fecha);
@@ -109,7 +112,7 @@ public class FtpSvcImpl implements ConnectionSvc {
 	                	}	                	
 	                	fileVO.setName(ftpFile.getName());
 	                	fileVO.setSize(String.valueOf(ftpFile.getSize()));
-	                	fileVO.setTipo(String.valueOf(ftpFile.getType()));
+	                	fileVO.setTipo(StringUtils.getFileExtension(ftpFile.getName()));
 	                	fileVO.setBreadcrumb(breadcrumb);
 	                	params = ObjectUtils.introspect(fileVO);
 	                	json = restSvc.post(restVO, params);

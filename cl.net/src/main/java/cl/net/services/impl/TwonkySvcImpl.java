@@ -43,7 +43,7 @@ public class TwonkySvcImpl implements ConnectionSvc{
 
 
 
-	public void scann(SystemVO systemVO, DirVO dirVO) throws Exception {
+	public void scann(DirVO dirVO) throws Exception {
 		String queryParam = "001";
 		List<TwonkyFile> list;
 		FileVO fileVO;
@@ -55,7 +55,7 @@ public class TwonkySvcImpl implements ConnectionSvc{
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String fecha = sdf.format(date);
 		String json;
-		if(dirVO != null){
+		if(dirVO != null && dirVO.getId() != null){
 			queryParam = queryParam.concat("/").concat(dirVO.getBreadcrumb()).concat(dirVO.getCodigo());
 		}
 		if(twonyClient.isConnected()){
@@ -65,7 +65,8 @@ public class TwonkySvcImpl implements ConnectionSvc{
 			for (TwonkyFile twonkyFile : list) {
 				params = new HashMap<String, Object>();
 				breadcrumb = "";
-                if(dirVO != null){
+				//TODO:Revisar el bread que puede estar malo
+                if(dirVO != null && dirVO.getId() != null){
                 	breadcrumb = breadcrumb.concat(dirVO.getBreadcrumb().concat("/"));
                 }
 				if(twonkyFile.getType().equals(TwonkyType.FILTER_DIR)){
@@ -73,15 +74,15 @@ public class TwonkySvcImpl implements ConnectionSvc{
                 	restVO = new RestVO();
                 	newDirVO.setFecha(fecha);
                 	
-                	if(dirVO != null){
+                	if(dirVO != null && dirVO.getId() != null){
                 		newDirVO.setFK_dir(String.valueOf(dirVO.getId()));	
                 	}
-                	newDirVO.setFK_system(systemVO.getId());
+                	newDirVO.setFK_system(dirVO.getFK_system());
                 	newDirVO.setName(twonkyFile.getName());
                 	newDirVO.setTipo(String.valueOf(twonkyFile.getType()));
                 	newDirVO.setBreadcrumb(breadcrumb);
                 	newDirVO.setCodigo(twonkyFile.getId());
-                	restVO.setUrl(this.restUrl.concat("rs/svc.php/dir/create"));
+                	restVO.setUrl(this.restUrl.concat("rpc/svc.php/dir/create"));
                 	
                 	params = ObjectUtils.introspect(newDirVO);
                 	json = restSvc.post(restVO, params);
@@ -89,10 +90,10 @@ public class TwonkySvcImpl implements ConnectionSvc{
                 	
                 	parentDirVO.setBreadcrumb(breadcrumb);
                 	parentDirVO.setCodigo(twonkyFile.getId());
-                	this.scann(systemVO, parentDirVO);
+                	this.scann(parentDirVO);
 				}else{
                 	restVO = new RestVO();
-                	restVO.setUrl(this.restUrl.concat("rs/svc.php/file/create"));
+                	restVO.setUrl(this.restUrl.concat("rpc/svc.php/file/create"));
                 	fileVO = new FileVO();
                 	
                 	fileVO.setFecha(fecha);
