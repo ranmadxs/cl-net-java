@@ -1,25 +1,22 @@
 package cl.net.utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
+import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 public class GsonUtils {
-
-	private static String clean(String json){
-		
-		int inicio = json.indexOf("<!--");
-		
-		return json.substring(0,inicio);
-	}
+	private static Logger log = Logger.getLogger(GsonUtils.class);
 	
-	public static Object json2obj(String json, Class clase){
+	public static Object json2obj(String json, Class clase)throws Exception{
 		Object obj = null;
 		Gson gson = new Gson();
-		json = clean(json);
-		obj = gson.fromJson(json, clase);
+		//json = clean(json);
+		try{
+			obj = gson.fromJson(json, clase);	
+		}catch(Exception e){
+			log.error(json);
+			throw new Exception(e);
+		}
+		
 		return obj; 
     }
 		

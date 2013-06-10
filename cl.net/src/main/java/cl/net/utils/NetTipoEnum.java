@@ -5,6 +5,7 @@ public enum NetTipoEnum {
 	FTP ("FTP"),
 	SMB ("SMB"),
 	HTTP("HTTP"),
+	FILE_SYSTEM("FILE_SYSTEM"),
 	;
 	public String codigo;
 

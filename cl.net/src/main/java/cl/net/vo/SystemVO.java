@@ -9,7 +9,15 @@ public class SystemVO extends AbstractUtilDTO{
 	private String name;
 	private String FK_driver;
 	private String fecha;
+	private String uri;
+		
 	
+	public String getUri() {
+		return uri;
+	}
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 	public Integer getId() {
 		return id;
 	}
